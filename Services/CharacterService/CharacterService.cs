@@ -19,7 +19,6 @@ namespace dotnet_rpg.Services.CharacterService
         }
 
 
-
         public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
         {
             var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
@@ -42,6 +41,27 @@ namespace dotnet_rpg.Services.CharacterService
             var serviceResponse = new ServiceResponse<GetCharacterDto>();
             var character = characters.FirstOrDefault(c => c.Id == id);
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto updatedCharacter)
+        {
+            var serviceResponse = new ServiceResponse<GetCharacterDto>();
+
+            try
+            {
+                int characterIndex = characters.FindIndex(c => c.Id == updatedCharacter.Id);
+                if (characterIndex == -1) throw new Exception("Character not found.");
+
+                characters[characterIndex] = _mapper.Map<Character>(updatedCharacter);
+
+                serviceResponse.Data = _mapper.Map<GetCharacterDto>(updatedCharacter);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
             return serviceResponse;
         }
     }
